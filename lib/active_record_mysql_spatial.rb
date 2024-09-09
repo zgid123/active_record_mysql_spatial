@@ -9,6 +9,7 @@ require_relative 'active_record_mysql_spatial/active_record/mysql/point'
 require_relative 'active_record_mysql_spatial/active_record/native_types'
 require_relative 'active_record_mysql_spatial/active_record/quoting'
 require_relative 'active_record_mysql_spatial/active_record/register_types'
+require_relative 'active_record_mysql_spatial/acts_as_spatial'
 require_relative 'active_record_mysql_spatial/geometry'
 require_relative 'active_record_mysql_spatial/version'
 

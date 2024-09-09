@@ -69,3 +69,34 @@ p position.mls.items # puts all linestrings
 p position.mls.items.first.coordinates.first.x # puts x of first point of first linestring
 p position.mls.items.last.coordinates.last.y # puts y of last point of last linestring
 ```
+
+# Custom result class
+
+In your business, you may need to use spatial data for a purpose. To load data and map to the semantic data for your business, create a class and override the method `cast_value`.
+
+```rb
+class YourClass < ActiveRecordMysqlSpatial::ActiveRecord::MySQL::Linestring
+  attr_reader :sum_x, :sum_y
+
+  private
+
+  def cast_value(value)
+    super
+
+    @sum_x, @sum_y = @coordinates.reduce([0, 0]) do |sum, point|
+      sum[0] += point.x.to_i
+      sum[1] += point.y.to_i
+      sum
+    end
+
+    self
+  end
+end
+
+# models/position.rb
+class Position < ApplicationRecord
+  include ActiveRecordMysqlSpatial::ActsAsSpatial
+
+  acts_as_linestring :ls, serializer: YourClass
+end
+```
