@@ -14,8 +14,17 @@ module ActiveRecordMysqlSpatial
               point: {
                 name: 'point'
               },
+              polygon: {
+                name: 'polygon'
+              },
               linestring: {
                 name: 'linestring'
+              },
+              multipoint: {
+                name: 'multipoint'
+              },
+              multipolygon: {
+                name: 'multipolygon'
               },
               multilinestring: {
                 name: 'multilinestring'

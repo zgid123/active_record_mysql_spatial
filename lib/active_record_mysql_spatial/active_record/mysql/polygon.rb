@@ -1,40 +1,33 @@
 # frozen_string_literal: true
 
 require_relative 'base'
-require_relative 'point'
+require_relative 'linestring'
 
 module ActiveRecordMysqlSpatial
   module ActiveRecord
     module MySQL
-      class Linestring < Base
-        attr_reader :items
+      class Polygon < Base
+        attr_accessor :items
 
         def type
-          :linestring
-        end
-
-        def coordinates
-          # TODO: remove later
-          puts 'coordinates is deprecated. Please use items instead.'
-
-          @items
+          :polygon
         end
 
         def to_sql
           return nil if @items.blank?
 
-          "LineString(#{to_coordinates_sql})"
+          "Polygon(#{to_coordinates_sql})"
         end
 
         def to_coordinates_sql
-          @items.map(&:to_coordinate_sql).compact.join(', ')
+          items.map { |linestring| "(#{linestring.to_coordinates_sql})" }.join(',')
         end
 
         def ==(other)
           return false if super == false
 
-          items.each_with_index do |coord, index|
-            return false if coord != other.items[index]
+          items.each_with_index do |item, index|
+            return false if item != other.items[index]
           end
 
           true
@@ -46,10 +39,15 @@ module ActiveRecordMysqlSpatial
           @raw = value
           coordinates, create_raw = extract_coordinates(value)
 
-          @raw = Geometry.from_coordinates(coordinates).as_binary if create_raw
+          @raw = Geometry.from_coordinates(coordinates, type: :polygon).as_binary if create_raw
 
-          @items = coordinates.map do |coord|
-            Point.new.send(:cast_value, coord)
+          @items = coordinates.map do |linestring|
+            Linestring.new.send(
+              :cast_value,
+              {
+                coordinates: linestring
+              }
+            )
           end
 
           self

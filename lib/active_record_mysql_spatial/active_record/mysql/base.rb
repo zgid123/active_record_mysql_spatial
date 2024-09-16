@@ -35,6 +35,10 @@ module ActiveRecordMysqlSpatial
           raise NotImplementedError
         end
 
+        def ==(other)
+          self.class == other.class
+        end
+
         private
 
         def cast_value(value)
@@ -42,17 +46,18 @@ module ActiveRecordMysqlSpatial
         end
 
         def extract_coordinates(attributes, type: :linestring)
+          return [attributes, true] if type == :point && attributes.is_a?(Array)
           return [drill_coordinates(attributes) || [], true] if valid_hash?(attributes, type: type)
           return [[], false] unless attributes.is_a?(String)
 
           if attributes.encoding.to_s == 'ASCII-8BIT'
-            linestring = Geometry.parse_bin(attributes)
+            spatial_data = Geometry.parse_bin(attributes)
 
-            [linestring.coordinates, false]
+            [drill_elements(spatial_data), false]
           elsif Geometry.valid_spatial?(attributes)
             spatial_data = Geometry.from_text(attributes)
 
-            [spatial_data.coordinates, true]
+            [drill_elements(spatial_data), true]
           else
             parsed_json = ::ActiveSupport::JSON.decode(attributes)
 
@@ -72,6 +77,10 @@ module ActiveRecordMysqlSpatial
 
         def drill_coordinates(attributes)
           attributes[:coordinates].presence || attributes['coordinates'].presence || attributes[:coordinate].presence || attributes['coordinate']
+        end
+
+        def drill_elements(spatial)
+          spatial.coordinates
         end
       end
     end

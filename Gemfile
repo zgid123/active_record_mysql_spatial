@@ -14,6 +14,4 @@ end
 
 group :development do
   gem 'lefthook'
-
-  gem 'activerecord-native_db_types_override'
 end

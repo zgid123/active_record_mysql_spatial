@@ -24,6 +24,8 @@ module ActiveRecordMysqlSpatial
         end
 
         def ==(other)
+          return false if super == false
+
           items.each_with_index do |item, index|
             return false if item != other.items[index]
           end

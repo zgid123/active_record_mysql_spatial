@@ -9,7 +9,10 @@ module ActiveRecordMysqlSpatial
 
       included do
         define_column_methods :point,
+                              :polygon,
                               :linestring,
+                              :multipoint,
+                              :multipolygon,
                               :multilinestring
       end
     end

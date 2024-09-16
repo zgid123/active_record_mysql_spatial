@@ -1,13 +1,12 @@
 PATH
   remote: .
   specs:
-    active_record_mysql_spatial (0.2.0)
+    active_record_mysql_spatial (0.3.0)
       rgeo (~> 3.0, >= 3.0.1)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    activerecord-native_db_types_override (0.3.0)
     ast (2.4.2)
     byebug (11.1.3)
     json (2.7.2)
@@ -43,7 +42,6 @@ PLATFORMS
 
 DEPENDENCIES
   active_record_mysql_spatial!
-  activerecord-native_db_types_override
   byebug
   lefthook
   rake (~> 13.0)

@@ -36,7 +36,7 @@ module ActiveRecordMysqlSpatial
         alias to_coordinates_sql to_coordinate_sql
 
         def ==(other)
-          x == other.x && y == other.y
+          super && x == other.x && y == other.y
         end
 
         private

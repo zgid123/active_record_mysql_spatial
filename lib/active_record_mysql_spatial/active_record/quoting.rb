@@ -1,15 +1,13 @@
 # frozen_string_literal: true
 
-require_relative 'mysql/linestring'
-require_relative 'mysql/multilinestring'
-require_relative 'mysql/point'
+require_relative 'mysql/base'
 
 module ActiveRecordMysqlSpatial
   module ActiveRecord
     module Quoting
       def quote(value)
         case value
-        when MySQL::Linestring, MySQL::Multilinestring, MySQL::Point
+        when MySQL::Base
           quote_geom(value)
         else
           super
