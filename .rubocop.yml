@@ -12,7 +12,7 @@ Style/StringLiteralsInInterpolation:
 Layout/LineLength:
   Max: 250
   Exclude:
-    - spec/shared_data.rb
+    - spec/support/shared_data.rb
 
 Style/FrozenStringLiteralComment:
   Enabled: true
@@ -39,7 +39,7 @@ Metrics/PerceivedComplexity:
 Metrics/BlockLength:
   Max: 250
   Exclude:
-    - spec/shared_data.rb
+    - spec/support/shared_data.rb
 
 Metrics/ClassLength:
   Max: 250

@@ -28,6 +28,12 @@ module ActiveRecordMysqlSpatial
               },
               multilinestring: {
                 name: 'multilinestring'
+              },
+              geomcollection: {
+                name: 'geomcollection'
+              },
+              geometrycollection: {
+                name: 'geometrycollection'
               }
             )
           end

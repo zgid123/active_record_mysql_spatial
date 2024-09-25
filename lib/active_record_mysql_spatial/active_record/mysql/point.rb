@@ -47,21 +47,25 @@ module ActiveRecordMysqlSpatial
 
           @raw = Geometry.from_coordinates(coordinate, type: :point).as_binary if create_raw
 
-          @x, @y = if coordinate.is_a?(Array) && coordinate.present?
-                     [coordinate[0], coordinate[1]]
-                   elsif value.is_a?(Array)
-                     [value[0], value[1]]
-                   elsif value.is_a?(Hash)
-                     [value[:x] || value['x'], value[:y] || value['y']]
+          @x, @y = if coordinate.present?
+                     drill_value(coordinate)
                    else
-                     [nil, nil]
+                     drill_value(value)
                    end
 
           self
         rescue StandardError => e
-          @error = e.message
+          handle_error(e)
+        end
 
-          self
+        def drill_value(value)
+          if value.is_a?(Array)
+            [value[0], value[1]]
+          elsif value.is_a?(Hash)
+            [value[:x] || value['x'], value[:y] || value['y']]
+          else
+            [nil, nil]
+          end
         end
       end
     end

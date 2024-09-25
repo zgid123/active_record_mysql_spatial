@@ -52,9 +52,7 @@ module ActiveRecordMysqlSpatial
 
           self
         rescue StandardError => e
-          @error = e.message
-
-          self
+          handle_error(e)
         end
       end
     end

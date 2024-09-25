@@ -8,7 +8,7 @@ describe ActiveRecordMysqlSpatial::Geometry do
   subject { described_class }
 
   describe '#parse_bin' do
-    %i[point linestring multilinestring multipoint polygon multipolygon].each do |type|
+    %i[point linestring multilinestring multipoint polygon multipolygon geometrycollection].each do |type|
       context "parse #{type} from binary text" do
         it "returns #{type}" do
           rgeo_data = subject.parse_bin(send("raw_#{type}"))
@@ -39,8 +39,23 @@ describe ActiveRecordMysqlSpatial::Geometry do
     end
   end
 
+  describe '#from_geometries' do
+    %i[geometrycollection].each do |type|
+      context "parse #{type} from geometries" do
+        it "returns #{type}" do
+          data = send("#{type}_params")[:geometries]
+
+          rgeo_data = subject.from_geometries(data)
+
+          expect(rgeo_data.to_s).to eq(send("sql_#{type}"))
+          expect(rgeo_data.geometry_type).to eq(send("#{type}_geometry_type"))
+        end
+      end
+    end
+  end
+
   describe '#from_text' do
-    %i[point linestring multilinestring multipoint polygon multipolygon].each do |type|
+    %i[point linestring multilinestring multipoint polygon multipolygon geometrycollection].each do |type|
       context "parse #{type} from sql value" do
         it "returns #{type}" do
           sql_data = send("sql_#{type}")
@@ -55,7 +70,7 @@ describe ActiveRecordMysqlSpatial::Geometry do
 
   describe '#valid_spatial?' do
     context 'valid spatial'  do
-      %i[point linestring multilinestring multipoint polygon multipolygon].each do |type|
+      %i[point linestring multilinestring multipoint polygon multipolygon geometrycollection].each do |type|
         it "returns true for #{type}" do
           sql_data = send("sql_#{type}")
 
@@ -72,7 +87,7 @@ describe ActiveRecordMysqlSpatial::Geometry do
     end
   end
 
-  %i[point linestring multilinestring multipoint polygon multipolygon].each do |type|
+  %i[point linestring multilinestring multipoint polygon multipolygon geometrycollection].each do |type|
     describe "##{type}?" do
       context "is #{type}" do
         it 'returns true' do

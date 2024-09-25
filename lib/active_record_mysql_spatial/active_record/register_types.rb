@@ -2,6 +2,7 @@
 
 require 'active_support/concern'
 
+require_relative 'mysql/geometrycollection'
 require_relative 'mysql/linestring'
 require_relative 'mysql/multilinestring'
 require_relative 'mysql/multipoint'
@@ -26,6 +27,8 @@ module ActiveRecordMysqlSpatial
               type_map.register_type('multipoint', MySQL::Multipoint.new)
               type_map.register_type('multipolygon', MySQL::Multipolygon.new)
               type_map.register_type('multilinestring', MySQL::Multilinestring.new)
+              type_map.register_type('geomcollection', MySQL::Geometrycollection.new)
+              type_map.register_type('geometrycollection', MySQL::Geometrycollection.new)
             end
           end
 
@@ -45,6 +48,8 @@ module ActiveRecordMysqlSpatial
         ::ActiveRecord::Type.register(:multipoint, MySQL::Multipoint, adapter: :mysql2)
         ::ActiveRecord::Type.register(:multipolygon, MySQL::Multipolygon, adapter: :mysql2)
         ::ActiveRecord::Type.register(:multilinestring, MySQL::Multilinestring, adapter: :mysql2)
+        ::ActiveRecord::Type.register(:geomcollection, MySQL::Geometrycollection, adapter: :mysql2)
+        ::ActiveRecord::Type.register(:geometrycollection, MySQL::Geometrycollection, adapter: :mysql2)
       end
     end
   end

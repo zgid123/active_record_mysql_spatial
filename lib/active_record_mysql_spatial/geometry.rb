@@ -11,6 +11,10 @@ module ActiveRecordMysqlSpatial
         send("#{type}_from_coords", coordinates)
       end
 
+      def from_geometries(geometries)
+        geometrycollection_from_geometries(geometries)
+      end
+
       def from_text(value)
         cartesian_factory.parse_wkt(value)
       rescue StandardError
@@ -23,7 +27,8 @@ module ActiveRecordMysqlSpatial
           multilinestring?(value) ||
           multipoint?(value) ||
           polygon?(value) ||
-          multipolygon?(value)
+          multipolygon?(value) ||
+          geometrycollection?(value)
       end
 
       def point?(value)
@@ -48,6 +53,10 @@ module ActiveRecordMysqlSpatial
 
       def multipolygon?(value)
         /^multipolygon*.\(/i.match?(value)
+      end
+
+      def geometrycollection?(value)
+        /^geometrycollection*.\(/i.match?(value)
       end
 
       private
@@ -103,6 +112,14 @@ module ActiveRecordMysqlSpatial
         end
 
         cartesian_factory.multi_polygon(polygons)
+      end
+
+      def geometrycollection_from_geometries(geometries)
+        geos = geometries.map do |geometry|
+          send("#{geometry[:type].downcase}_from_coords", geometry[:coordinates] || geometry[:coordinate])
+        end
+
+        cartesian_factory.collection(geos)
       end
 
       def parser

@@ -3,6 +3,7 @@
 require 'rgeo'
 
 require_relative 'active_record_mysql_spatial/active_record/column_methods'
+require_relative 'active_record_mysql_spatial/active_record/mysql/geometrycollection'
 require_relative 'active_record_mysql_spatial/active_record/mysql/linestring'
 require_relative 'active_record_mysql_spatial/active_record/mysql/multilinestring'
 require_relative 'active_record_mysql_spatial/active_record/mysql/multipoint'

@@ -13,7 +13,9 @@ module ActiveRecordMysqlSpatial
                               :linestring,
                               :multipoint,
                               :multipolygon,
-                              :multilinestring
+                              :geomcollection,
+                              :multilinestring,
+                              :geometrycollection
       end
     end
   end

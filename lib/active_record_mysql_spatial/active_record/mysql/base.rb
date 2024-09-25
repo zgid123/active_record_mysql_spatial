@@ -5,7 +5,8 @@ module ActiveRecordMysqlSpatial
     module MySQL
       class Base < ::ActiveRecord::Type::Json
         attr_reader :raw,
-                    :error
+                    :error,
+                    :error_backtrace
 
         def type
           raise NotImplementedError
@@ -41,13 +42,20 @@ module ActiveRecordMysqlSpatial
 
         private
 
+        def handle_error(error)
+          @error = error.message
+          @error_backtrace = error.backtrace
+
+          self
+        end
+
         def cast_value(value)
           raise NotImplementedError
         end
 
         def extract_coordinates(attributes, type: :linestring)
           return [attributes, true] if type == :point && attributes.is_a?(Array)
-          return [drill_coordinates(attributes) || [], true] if valid_hash?(attributes, type: type)
+          return [drill_coordinates(attributes, type: type) || [], true] if valid_hash?(attributes, type: type)
           return [[], false] unless attributes.is_a?(String)
 
           if attributes.encoding.to_s == 'ASCII-8BIT'
@@ -61,12 +69,19 @@ module ActiveRecordMysqlSpatial
           else
             parsed_json = ::ActiveSupport::JSON.decode(attributes)
 
-            [parsed_json['coordinates'] || [], true]
+            coordinates = if type == :geometrycollection
+                            parsed_json['geometries']
+                          else
+                            parsed_json['coordinates']
+                          end
+
+            [coordinates || [], true]
           end
         end
 
         def valid_hash?(attributes, type: :linestring)
           return false unless attributes.is_a?(Hash)
+          return attributes.key?(:geometries) || attributes.key?('geometries') if type == :geometrycollection
 
           valid_coord_hash = attributes.key?(:coordinates) || attributes.key?('coordinates') || attributes.key?(:coordinate) || attributes.key?('coordinate')
 
@@ -75,12 +90,18 @@ module ActiveRecordMysqlSpatial
           valid_coord_hash || attributes.key?(:x) || attributes.key?('x') || attributes.key?(:y) || attributes.key?('y')
         end
 
-        def drill_coordinates(attributes)
+        def drill_coordinates(attributes, type: :linestring)
+          return attributes[:geometries].presence || attributes['geometries'] if type == :geometrycollection
+
           attributes[:coordinates].presence || attributes['coordinates'].presence || attributes[:coordinate].presence || attributes['coordinate']
         end
 
         def drill_elements(spatial)
-          spatial.coordinates
+          if spatial.geometry_type == RGeo::Feature::GeometryCollection
+            spatial.geometries
+          else
+            spatial.coordinates
+          end
         end
       end
     end
