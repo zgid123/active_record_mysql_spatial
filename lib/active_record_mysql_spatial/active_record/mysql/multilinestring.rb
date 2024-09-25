@@ -20,7 +20,7 @@ module ActiveRecordMysqlSpatial
         end
 
         def to_coordinates_sql
-          items.map { |linestring| "(#{linestring.to_coordinates_sql})" }.join(',')
+          items.map { |linestring| "(#{linestring.to_coordinates_sql})" }.join(', ')
         end
 
         def ==(other)

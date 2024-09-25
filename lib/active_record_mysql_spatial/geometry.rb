@@ -27,27 +27,27 @@ module ActiveRecordMysqlSpatial
       end
 
       def point?(value)
-        /^point\(/i.match?(value)
+        /^point*.\(/i.match?(value)
       end
 
       def linestring?(value)
-        /^linestring\(/i.match?(value)
+        /^linestring*.\(/i.match?(value)
       end
 
       def multilinestring?(value)
-        /^multilinestring\(/i.match?(value)
+        /^multilinestring*.\(/i.match?(value)
       end
 
       def multipoint?(value)
-        /^multipoint\(/i.match?(value)
+        /^multipoint*.\(/i.match?(value)
       end
 
       def polygon?(value)
-        /^polygon\(/i.match?(value)
+        /^polygon*.\(/i.match?(value)
       end
 
       def multipolygon?(value)
-        /^multipolygon\(/i.match?(value)
+        /^multipolygon*.\(/i.match?(value)
       end
 
       private

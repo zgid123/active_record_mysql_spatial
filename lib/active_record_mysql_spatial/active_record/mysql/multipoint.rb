@@ -16,10 +16,10 @@ module ActiveRecordMysqlSpatial
         def to_sql
           return nil if @items.blank?
 
-          "MultiPoint(#{to_coordinate_sql})"
+          "MultiPoint(#{to_coordinates_sql})"
         end
 
-        def to_coordinate_sql
+        def to_coordinates_sql
           @items.map(&:to_coordinate_sql).compact.join(', ')
         end
 
